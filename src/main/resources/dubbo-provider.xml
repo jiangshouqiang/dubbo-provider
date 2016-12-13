@@ -1,0 +1,30 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+	   http://code.alibabatech.com/schema/dubbo
+	   http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+	<!-- 应用服务名称及使用的日志记录器 -->
+	<dubbo:application name="${dubbo.application.name}"
+					   logger="${dubbo.application.logger}"></dubbo:application>
+
+	<!-- 因service使用了代理进行拦截控制,无法使用注入的方式注册服务 -->
+	<!--<dubbo:annotation package="${dubbo.scan}"/>-->
+
+
+	<!-- 使用zookeeper注册中心暴露服务地址 -->
+	<dubbo:registry address="${dubbo.registry.address}" register="${dubbo.registry.register}"></dubbo:registry>
+
+	<!-- 配置通信协议,反序列化使用java原生方式,hessian导致的反序列化失败的问题较多 -->
+	<dubbo:protocol name="${dubbo.protocol.name}" port="${dubbo.protocol.port}" serialization="java"/>
+
+	<!-- 延迟到Spring初始化完成后，再暴露服务,服务调用超时设置为6秒,超时不重试-->
+	<dubbo:provider timeout="60000" retries="0"/>
+
+	<!--  配置需要注册的服务 -->
+	<dubbo:service interface="com.gr.jiang.mod.hello.UserService" ref="userService"/>
+	<!--<dubbo:annotation package="com.gr.jiang.provider.impl"/>-->
+
+</beans>
